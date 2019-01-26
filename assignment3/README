@@ -1,0 +1,18 @@
+1. Unzip folder and build project using following maven comman
+mvn -e clean install
+
+2. Run TwitterCollector.scala to collect tweets. It will save tweets in D:/tmp/tweets_out with folder structures corresponding to every hour of a day.
+3. Following system environment variables can be set and are used in TwitterCollector.scala
+    OUTPUT_DIR : Specify Output directory
+    OUTPUT_BATCH_INTERVAL :  Size of output batches in seconds
+    OUTPUT_FILES : Number of output files per batch interval.
+
+4. Run FileDataAnalyzer.scala to run analysis on data collected in step 1.
+
+5. Run TwitterCollectorAnalyzer.scala to run analysis on real-time tweets.
+
+
+Input file folder link : https://drive.google.com/open?id=1wqAmw5sHITmU1kqsYzA7in4brOkijeUp
+Historical Analysis Output files : https://drive.google.com/drive/folders/1vbHV2RjlQ0JTYmCh--dSp60SAF5fXUB9
+
+real-time Analysis Output files : https://drive.google.com/open?id=12XJ1Vz0GnK7t3pqSD9bp3JUteSYMsHOt
