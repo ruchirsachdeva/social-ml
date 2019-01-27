@@ -34,11 +34,14 @@ object TwitterCollectorAnalyzer {
   // Setting up streaming context with a window of 10 seconds
   val sparkConf = new SparkConf().setMaster("local[12]").setAppName("Streaming Twitter")
 
-  val ssc = new StreamingContext(sparkConf, Seconds(60))
+  val ssc = new StreamingContext(sparkConf, Seconds(
+  ))
   val sc = ssc.sparkContext
   val sqlContext = new SQLContext(sc)
   //to convert $'col name' into an Column
   import sqlContext.implicits._
+
+  var outputSuffix=1
 
   def main(args: Array[String]) {
     val consumerKey = "BI6IVrrX9S3PB0lBtnju9Dq1G"
@@ -62,12 +65,12 @@ object TwitterCollectorAnalyzer {
     val outputDir = sys.env.getOrElse("OUTPUT_DIR", "D:/tmp/tweets_out")
 
     // Size of output batches in seconds
-    val outputBatchInterval = sys.env.get("OUTPUT_BATCH_INTERVAL").map(_.toInt).getOrElse(60)
+    val outputBatchInterval = sys.env.get("OUTPUT_BATCH_INTERVAL").map(_.toInt).getOrElse(600)
 
     // Number of output files per batch interval.
     val outputFiles = sys.env.get("OUTPUT_FILES").map(_.toInt).getOrElse(1)
 
-    // Echo settings to the user
+    // Echo settings to the user-
     Seq(("CHECKPOINT_DIR" -> checkpointDir),
       ("OUTPUT_DIR" -> outputDir),
       ("OUTPUT_FILES" -> outputFiles),
@@ -79,11 +82,6 @@ object TwitterCollectorAnalyzer {
     System.setProperty("spark.cleaner.ttl", (outputBatchInterval * 5).toString)
     System.setProperty("spark.cleaner.delay", (outputBatchInterval * 5).toString)
 
-    // Date format for creating Hive partitions
-    val outDateFormat = outputBatchInterval match {
-      case 60 => new java.text.SimpleDateFormat("yyyy/MM/dd/HH/mm")
-      case 3600 => new java.text.SimpleDateFormat("yyyy/MM/dd/HH")
-    }
 
     val statuses  = TwitterUtils.createStream(ssc, Option(twitter.getAuthorization()),
       Seq("Narendra Modi","NarendraModi","Rahul Gandhi","RahulGandhi","lok sabha elections", "loksabha elections", "lok sabha", "loksabha", "election 2019 india", "Bharatiya Janta Party","BharatiyaJantaParty", "BJP", "Indian National Congress","INC" ,"IndianNationalCongress", "Congress india"))
@@ -239,7 +237,7 @@ object TwitterCollectorAnalyzer {
     val preparedData = transformedData.distinct
     preparedData.select("text", "features").take(3).foreach(println)
     //
-    var outputSuffix=1
+
     val output = "src/main/resources/output/"+ outputSuffix
     outputSuffix +=1
     preparedData.coalesce(1).write.json(output + "/features")
@@ -255,7 +253,7 @@ object TwitterCollectorAnalyzer {
     val kValWSSSE: Array[Array[Double]] = Array.ofDim[Double](50, 2)
     var count=0
     // Calculate WSSSE for a set of kVal and store in kValWSSSE
-    for (kVal <- Seq(20,  30,  40,  50,  60,  70,  80, 90, 100, 120, 140, 300)) {
+    for (kVal <- Seq(5,10, 20,  30,  40,  50,  60,  70,  80, 90, 100, 120, 140)) {
       //    // Trains a k-means model.
       val kmeans = new KMeans().setK(kVal).setSeed(1L)
       val kmeansModel = kmeans.fit(trainingData.cache())
