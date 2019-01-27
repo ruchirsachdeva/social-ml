@@ -7,7 +7,7 @@ mvn -e clean install
     OUTPUT_BATCH_INTERVAL :  Size of output batches in seconds
     OUTPUT_FILES : Number of output files per batch interval.
 
-4. Run FileDataAnalyzer.scala to run analysis on data collected in step 1.
+4. Run FileDataAnalyzer.scala to run analysis on data collected in step 3.
 
 5. Run TwitterCollectorAnalyzer.scala to run analysis on real-time tweets.
 
